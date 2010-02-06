@@ -1,0 +1,33 @@
+div.borderdiv {
+    border:1px solid #ccc;
+}
+body { margin:50px;border:1px solid #e0e0e0; padding:50px;line-height:1.5em;}
+table { width:90% ;border:1px solid black;margin:10px;}
+table thead th { background;#999;}
+td { border:1px solid #ccc;text-align:left;padding-left:25px;}
+
+div#projects { padding-left:20px;}
+div#projects ul { padding-left:0;}
+div#projects p ,div#projects li{ padding-left:20px;}
+div#projects li  { list-style:none;}
+
+.red { color:red;}
+div.codediv{
+    border:1px solid  #999;
+    background:#efefef;
+    padding:5px;
+}
+div,p,pre {
+    word-wrap:break-word;
+    word-break: break-all; 
+}
+
+.state_down {
+    color:red;
+}
+.state_prepare {
+    color:yellow;
+}
+.state_active {
+    color:green;
+}

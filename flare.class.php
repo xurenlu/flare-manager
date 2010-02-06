@@ -530,6 +530,27 @@ class MemCachedClient {
         return false;
     }
 }
+/**
+ * compare two flare nodes;
+ * */
+function flarenode_cmp($a,$b){
+    if($a["role"]=="proxy")
+        return 1;
+    if($b["role"]=="proxy")
+        return  -1;
+    if($a["partition"]=="-1")
+        return 1;
+    if($a["partition"]==$b["partition"]){
+        if($a["role"]=="master" && $b["role"]=="slave")
+            return -1;
+        elseif($a["role"]==$b["role"]) 
+            return 0;
+        return 1;
+    }
+    if($a["partition"]<$b["partition"])
+        return -1;
+    return 1;
+}
 class flareClient extends MemCachedClient {
     var $nodes;
     /**
@@ -565,6 +586,7 @@ class flareClient extends MemCachedClient {
     }
     */
     function statsNodes() {
+        $forcehost=false;
         $cmd="stats nodes\r\n";
         if (!$this->_socket_write(-1, $cmd, $forcehost)) {
             return false;
@@ -586,21 +608,32 @@ class flareClient extends MemCachedClient {
             $port=$tmp[1];
             $hosts[$addr.":".$port][$tmp[2]]=$arr[2];
         }
+        foreach($hosts as $k=>$v){
+            $hosts[$k]["addr"]=$k;
+        }
+        uasort($hosts,"flarenode_cmp");
         $this->nodes=$hosts;
         return $hosts;
     }
 
     function _flareCmd($cmd){
-        if (!$this->_socket_write(-1,$cmd,false)) {
+        $forcehost=false;
+        print "$cmd\n";
+        print __LINE__."\n";
+        if (!$this->_socket_write(-1,$cmd,$forcehost)) {
             return false;
         }
+        print __LINE__."\n";
+        print_r($key);
         $value = $this->_socket_readstr($key, 1024, $forcehost);
+        print __LINE__."\n";
         if(trim($value)=="OK")
             return true;
         return false;
           
     }
     function _flareCmdEcho($cmd){
+        $forcehost=false;
         if (!$this->_socket_write(-1,$cmd,false)) {
             return false;
         }
@@ -608,11 +641,11 @@ class flareClient extends MemCachedClient {
         return trim($value);
     }
     function setHostRole($host,$port,$role,$balance,$partition){
-        $cmd="node role $host $port $role $balance $partition";
+        $cmd="node role $host $port $role $balance $partition\n";
         return $this->_flarecmd($cmd);
     }
     function setHostState($host,$port,$state){
-        $cmd="node state $host $port $state";
+        $cmd="node state $host $port $state\n";
         return $this->_flarecmd($cmd);
     }
 }
