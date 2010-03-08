@@ -13,7 +13,7 @@ foreach($hosts as $k=>$host){
     echo '<td>'.$host["partition"].'</td>';
     echo '<td>'.$host["balance"].'</td>';
     echo '<td><span class="state_'.$host["state"].'">'.$host["state"].'</span></td>';
-    echo '<td><a href="?act=set_state&host='.$host["addr"].'&'.$addon.'">new State</span></td>';
+    echo '<td><a href="?act=set_state&host='.$host["addr"].'&'.$addon.'">modify</span></td>';
     echo '</tr>';
 }
 ?>

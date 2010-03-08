@@ -8,6 +8,14 @@ if(empty($_COOKIE["flarei_host"]))
     exit();
 }
  */
+function fetch_a_proxy($flare){
+        $hosts=$flare->statsNodes();
+        foreach($hosts as $host){
+            if(strtolower($host["role"])=="proxy"){
+                return $host['addr'];
+            }
+        }
+}
 global $config;
 $config["states"]=array(
     "active",
@@ -19,8 +27,13 @@ $config["roles"]=array(
     "slave",
     "proxy"
 );
-$config["flarei_ip"]="127.0.0.1";
-$config["flarei_port"]=12120;
+$config["flarei_ip"]="";   //Please change it.
+$config["flarei_port"]=0;  //Please change it.
+
+#$config["flared_ip"]="ksup4.search.cnb.yahoo.com";   //Please change it.
+#$config["flared_port"]=12121;  //Please change it.
+
+
 if(!empty($config["flarei_ip"])
     &&
     empty($_GET["flarei_ip"])
@@ -28,8 +41,7 @@ if(!empty($config["flarei_ip"])
     $_GET["flarei_ip"]=$config["flarei_ip"];
 if(!empty($config["flarei_port"])
     &&
-    empty($_GET["flarei_port"])
-)
+    empty($_GET["flarei_port"]))
     $_GET["flarei_port"]=$config["flarei_port"];
 
 global $addon;
@@ -66,6 +78,9 @@ function run($act=null){
     if(is_null($act))
        $act=$_GET["act"]; 
     switch($act){
+    case 'help':
+        v("./forms/help.php");
+        break;
     case 'set_host':
         v("./forms/set_host.php");
         break;
@@ -101,6 +116,35 @@ function run($act=null){
         $data["port"]=$hostinfo[1];
         v("./forms/set_state.php");
         break;
+    case "about":
+        v("./forms/about.php");
+        break;
+    case "license":
+        v("./forms/license.php");
+        break;
+    case "data":
+        global $data;
+        $flare=new FlareClient(array($_GET["flarei_ip"].":".$_GET["flarei_port"]));
+        $data["hosts"]=$flare->statsNodes();
+        v("./forms/data.php");
+        break;
+    case "data_get":
+        global $data,$config;
+        $flare=new FlareClient(array($_POST["addr"]));
+        $data["value"]=$flare->get(trim($_POST["key"]));
+        v("./forms/data_get.php");
+        break;
+    case "data_set":
+        global $config,$addon;
+        $flare=new FlareClient(array($_POST["addr"]));
+        $ret=$flare->set(trim($_POST["key"]),trim($_POST["value"]),intval($_POST["expire"]));
+        if($ret!=trim($_POST["key"])){
+            msg("set failed","index.php?".$addon);
+            exit();
+        }
+        goto("data");
+        break;
+
     case "nodes":
         $flare=new FlareClient(array($_GET["flarei_ip"].":".$_GET["flarei_port"]));
         global $data;
