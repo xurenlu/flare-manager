@@ -7,7 +7,7 @@ $url=$data["url"];
 $time=$data["time"];
 $level=$data["level"];
 ?><html>
-<meta http-equiv="refresh" content="<?php echo $time;?>;url=<? echo $url;?>">
+<meta http-equiv="refresh" content="<?php echo $time;?>;url=<?php echo $url;?>">
 <title>redirect </title>
 <style type="text/css">
 div.codediv{
@@ -33,6 +33,6 @@ img {border:0;}
 <div class="codediv">
 <p>
 &raquo; Message &nbsp;<br /><br />
-<a href="<? echo $url?>">[ <? echo $content;?> ]</a><br /><br /><a href="<? echo $url?>">Click me if the browser didn't transfer to new URL automaticlly;</a></p>
+<a href="<?php echo $url?>">[ <?php echo $content;?> ]</a><br /><br /><a href="<?php echo $url?>">Click me if the browser didn't transfer to new URL automaticlly;</a></p>
 </div>
 </td></tr></table></td></tr></table></body></html>
