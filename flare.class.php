@@ -137,9 +137,14 @@ class MemCachedClient {
                 }
                 $data = substr($data, 0, strlen($data) - 2);
                 if ($flags == 1) {
-                    $data = unserialize($data);
+                    $parsed = unserialize($data);
                 }
-                $results[$key] = $data;
+                if(empty($parsed) && !empty($data))
+                    $results[$key] = $data;
+                else
+                    $results[$key] = $parsed;
+
+
             }
         }
         if (count($results) <= 1) {
